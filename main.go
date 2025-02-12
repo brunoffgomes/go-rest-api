@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"rest-api/internal/config"
+	"rest-api/internal/infrastructure/repositories/postgres"
+	"rest-api/internal/usecases/student"
 )
 
 type Response struct {
@@ -104,6 +106,19 @@ func main() {
 	}
 
 	log.Println("Successfully connected to database!")
+
+	studentRepo := postgres.NewStudentRepository(db)
+
+	createStudentCase := student.NewCreateStudentUseCase(studentRepo)
+
+	input := &student.CreateStudentInput{
+		Name:      "João Silva",
+		Matricula: "203020",
+	}
+
+	student, err := createStudentCase.Execute(input)
+
+	log.Printf("User created successfully! ID: %d", student.Id)
 
 	// Close connection when done
 	defer func() {

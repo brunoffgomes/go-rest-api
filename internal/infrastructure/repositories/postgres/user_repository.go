@@ -16,17 +16,17 @@ func NewStudentRepository(db *gorm.DB) *studentRepository {
 	}
 }
 
-func (r *studentRepository) Create(user *entities.Student) error {
-	if err := r.db.Create(user).Error; err != nil {
+func (r *studentRepository) Create(student *entities.Student) error {
+	if err := r.db.Create(student).Error; err != nil {
 		return fmt.Errorf("Failed to create user: %w", err)
 	}
 	return nil
 }
 
-func (r *studentRepository) FindByID(id uint) (*entities.Student, error) {
-	var user entities.Student
-	if err := r.db.First(&user, id).Error; err != nil {
-		return nil, fmt.Errorf("Failed to find user: %w", err)
-	}
-	return &user, nil
-}
+//func (r *studentRepository) FindByID(id uint) (*entities.Student, error) {
+//	var user entities.Student
+//	if err := r.db.First(&user, id).Error; err != nil {
+//		return nil, fmt.Errorf("Failed to find user: %w", err)
+//	}
+//	return &user, nil
+//}
