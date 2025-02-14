@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"errors"
 	"fmt"
 	"gorm.io/gorm"
 	"rest-api/internal/domain/entities"
@@ -8,6 +9,20 @@ import (
 
 type studentRepository struct {
 	db *gorm.DB
+}
+
+func (r *studentRepository) FindById(id uint) (*entities.Student, error) {
+	var student entities.Student
+
+	result := r.db.First(&student, id)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("database error: %w", result.Error)
+	}
+	return &student, nil
 }
 
 func NewStudentRepository(db *gorm.DB) *studentRepository {
@@ -22,11 +37,3 @@ func (r *studentRepository) Create(student *entities.Student) error {
 	}
 	return nil
 }
-
-//func (r *studentRepository) FindByID(id uint) (*entities.Student, error) {
-//	var user entities.Student
-//	if err := r.db.First(&user, id).Error; err != nil {
-//		return nil, fmt.Errorf("Failed to find user: %w", err)
-//	}
-//	return &user, nil
-//}

@@ -3,8 +3,10 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"rest-api/internal/api/server"
 	"rest-api/internal/config"
 	"rest-api/internal/infrastructure/repositories/postgres"
+	"rest-api/internal/interfaces/handlers"
 	"rest-api/internal/usecases/student"
 )
 
@@ -107,18 +109,31 @@ func main() {
 
 	log.Println("Successfully connected to database!")
 
+	//studentRepo := postgres.NewStudentRepository(db)
+	//
+	//createStudentCase := student.NewCreateStudentUseCase(studentRepo)
+	//
+	//input := &student.CreateStudentInput{
+	//	Name:      "João Silva",
+	//	Matricula: "203020",
+	//}
+	//
+	//student, err := createStudentCase.Execute(input)
+	//
+	//log.Printf("User created successfully! ID: %d", student.Id)
+
 	studentRepo := postgres.NewStudentRepository(db)
 
-	createStudentCase := student.NewCreateStudentUseCase(studentRepo)
+	createStudentUseCase := student.NewCreateStudentUseCase(studentRepo)
 
-	input := &student.CreateStudentInput{
-		Name:      "João Silva",
-		Matricula: "203020",
-	}
+	getStudentByIdUseCase := student.GetStudentByIdStudentUseCase(studentRepo)
 
-	student, err := createStudentCase.Execute(input)
+	studentHandler := handlers.NewStudentHandler(createStudentUseCase, getStudentByIdUseCase)
 
-	log.Printf("User created successfully! ID: %d", student.Id)
+	srv := server.NewServer()
+	srv.SetupRoutes(studentHandler)
+
+	log.Fatal(srv.Start(":8081"))
 
 	// Close connection when done
 	defer func() {

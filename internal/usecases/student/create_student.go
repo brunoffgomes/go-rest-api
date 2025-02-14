@@ -3,7 +3,7 @@ package student
 import (
 	"fmt"
 	"rest-api/internal/domain/entities"
-	"rest-api/internal/domain/interfaces/repositories"
+	"rest-api/internal/interfaces/repositories"
 )
 
 type CreateStudentInput struct {
